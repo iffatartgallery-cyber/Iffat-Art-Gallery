@@ -1,0 +1,85 @@
+// SQLite + Prisma schema for Option A
+// Matches existing app tables as closely as practical
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["app"]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders       Order[]
+
+  @@schema("app")
+}
+
+model Artwork {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  price       Int      // store PKR as integer
+  images      Json     // array of image URLs
+  status      ArtworkStatus @default(available)
+  slug        String   @unique
+  dimensions  String?
+  medium      String?
+  inventory   Int      @default(1)
+  video_url   String?
+  created_at  DateTime @default(now())
+
+  orderItems  OrderItem[]
+
+  @@schema("app")
+}
+
+enum ArtworkStatus {
+  available
+  sold
+  hidden
+
+  @@schema("app")
+}
+
+model Order {
+  id                String   @id @default(cuid())
+  buyer_name        String
+  email             String
+  phone             String
+  shipping_address  String
+  city              String
+  total             Int
+  payment_method    String
+  payment_status    String   @default("pending")
+  order_status      String   @default("pending")
+  payment_proof_url String?
+  created_at        DateTime @default(now())
+
+  user    User?   @relation(fields: [userId], references: [id])
+  userId  String?
+
+  order_items OrderItem[]
+
+  @@schema("app")
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  order      Order    @relation(fields: [orderId], references: [id])
+  orderId    String
+  artwork    Artwork  @relation(fields: [artworkId], references: [id])
+  artworkId  String
+  price      Int
+  quantity   Int      @default(1)
+
+  @@schema("app")
+}
