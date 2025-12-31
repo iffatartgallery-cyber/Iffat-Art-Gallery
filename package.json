@@ -55,8 +55,7 @@
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
     "argon2": "^0.44.0",
-    "atmn": "^0.0.28",
-    "autumn-js": "^0.1.63",
+
     "bcrypt": "^6.0.0",
     "better-auth": "1.4.10",
     "better-sqlite3": "^12.5.0",
